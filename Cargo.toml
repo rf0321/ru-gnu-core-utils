@@ -3,3 +3,4 @@ name = "linux-gnu-core-util"
 version = "0.1.0"
 authors = ["ItinoseSan <dhelitus@gmail.com>"]
 [dependencies]
+nom = "^1.2.4"
