@@ -19,10 +19,10 @@ fn get_ls(){  // get current dir and file name
     }
 }
 fn do_mkdir(name: &str){ /*make directory. fn argument  is "mkdir <dirname>"*/
-    fs::create_dir(name);
+    std::fs::create_dir(name);
 }
-//  parse the mkdir key word
-named!(name_parser<&str>,
+//  parse keywords
+named!(mkdir_parser<&str>,
     chain!(
         tag!("mkdir") ~
         space? ~
@@ -34,38 +34,48 @@ named!(name_parser<&str>,
         || operand
     )
 );
-fn parsing_operand_expression(input: &str) {
-    match name_parser(input.as_bytes()) {
+fn call_function_mkdir_keyword(input: &str){
+    match mkdir_parser(input.as_bytes()){
         IResult::Done(_, operand) => do_mkdir(operand),
-		IResult::Error(error) => println!("Error: {:?}", error),
+        IResult::Error(error) => println!("Error: {:?}", error),
         IResult::Incomplete(needed) => println!("Incomplete: {:?}", needed)
     }
 }
-fn parsing_nonoperand_expression(input: &str){
-	match input {
-	      "ls"  => get_ls(),
-	      "pwd"  => get_pwd(),
-		    _ => println!("command is not found or umimplemanted now")
-	}
+fn call_function_ls_keyword(input: &str){
+    let ls_keyword = "ls".as_bytes();
+    match input.as_bytes(){
+        ls_keyword => get_ls(),
+        _ => println!("The command is not found")
+    }
 }
-fn string_to_static_str(s: String) -> &'static str { //  Convert String to &str for parse input
+fn call_function_pwd_keyword(input: &str){
+    let pwd_keyword = "pwd".as_bytes();
+    match input.as_bytes() {
+        pwd_keyword => get_pwd(),
+        _=> println!("The command is not found")
+    }
+}
+
+fn string_to_static_str(s: String) -> &'static str {
     unsafe {
         let ret = mem::transmute(&s as &str);
         mem::forget(s);
-		ret
+        ret
     }
 }
 fn main(){
 	loop {
 		let mut standard_input = String::new();
 		io::stdin().read_line(&mut standard_input).expect("Failed to read line");
-		let input_to_parser: &str = string_to_static_str(standard_input);
-
-		if input_to_parser.starts_with("mkdir"){
-			parsing_operand_expression(input_to_parser);
-		}
-		else {
-			parsing_nonoperand_expression(input_to_parser);
-		}
-	}
+        let input_to_parser = string_to_static_str(standard_input);
+        if input_to_parser.starts_with("mkdir"){
+            call_function_mkdir_keyword(input_to_parser);
+        }
+        else if input_to_parser.starts_with("ls") {
+            call_function_ls_keyword(input_to_parser);
+        }
+        else if input_to_parser.starts_with("pwd") {
+            call_function_pwd_keyword(input_to_parser);
+        }
+     }
 }
