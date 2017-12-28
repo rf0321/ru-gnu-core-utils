@@ -1,0 +1,4 @@
+# Ignore unnecessarily dir
+/.idea
+/target
+/linux-gnu-core-util.iml
