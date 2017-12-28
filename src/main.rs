@@ -65,8 +65,8 @@ fn string_to_static_str(s: String) -> &'static str {
 }
 fn main(){
 	loop {
-		let mut standard_input = String::new();
-		io::stdin().read_line(&mut standard_input).expect("Failed to read line");
+	let mut standard_input = String::new();
+	io::stdin().read_line(&mut standard_input).expect("Failed to read line");
         let input_to_parser = string_to_static_str(standard_input);
         if input_to_parser.starts_with("mkdir"){
             call_function_mkdir_keyword(input_to_parser);
