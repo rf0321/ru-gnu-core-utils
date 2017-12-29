@@ -2,15 +2,15 @@
 # ru-gnu-core-utils
 Implementation of a part of GNU Core Utilities in rust-lang
 # Usage
-1.clone this repository and move to the directory.
+### 1.clone this repository and move to the directory.
 ```
 git clone git@github.com:ItinoseSan/ru-gnu-core-utils.git
 ```
 ```
 cd ru-gnu-core-utils
 ```
-2.Run src
-This time, I implemated ```pwd, ls, mkdir``` :)
+### 2.Run src
+ This time, I implemated ```pwd, ls, mkdir``` :)
 ```
 cargo run
 ```
