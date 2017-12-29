@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/ItinoseSan/ru-gnu-core-utils.svg?branch=master)](https://travis-ci.org/ItinoseSan/ru-gnu-core-utils)
 # ru-gnu-core-utils
 Implementation of a part of GNU Core Utilities in rust-lang
 # Usage
