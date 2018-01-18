@@ -10,7 +10,7 @@ git clone git@github.com:ItinoseSan/ru-gnu-core-utils.git
 cd ru-gnu-core-utils
 ```
 ### 2.Run src
- This time, I implemated ```pwd, ls, mkdir``` :)
+ This time, I implemated ```pwd, ls, mkdir, echo``` :)
 ```
 cargo run
 ```
