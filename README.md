@@ -9,7 +9,11 @@ git clone git@github.com:ItinoseSan/ru-gnu-core-utils.git
 ```
 cd ru-gnu-core-utils
 ```
-### 2.Run src
+### 2.Set up using crate
+```
+cargo build
+```
+### 3.Run src
  This time, I implemated ```pwd, ls, mkdir, echo``` :)
 ```
 cargo run
