@@ -9,7 +9,7 @@ git clone git@github.com:ItinoseSan/ru-gnu-core-utils.git
 ```
 cd ru-gnu-core-utils
 ```
-### 2.Set up using crate
+### 2.Set up use crate
 ```
 cargo build
 ```
