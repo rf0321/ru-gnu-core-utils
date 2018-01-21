@@ -79,7 +79,7 @@ fn parse_shell_keyword(input: &str){
         excute_mkdir(input);
     }
     else if input.starts_with(rmdir_keyword){
-         excute_rmdir(input);
+        excute_rmdir(input);
     }   
     else if input.starts_with(echo_keyword) {
         excute_echo(input);
