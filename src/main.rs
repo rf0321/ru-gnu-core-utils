@@ -1,7 +1,7 @@
 #[macro_use]
 #[warn(unused_must_use)]
 extern crate nom; //  use parser combinator lib
-use nom::{IResult, space,alpha};
+use nom::{ IResult };
 use std::io;
 use std::mem;
 
@@ -20,14 +20,17 @@ fn do_mkdir(name: &str){ /*make directory. fn argument  is "mkdir <dirname>"*/
     std::fs::create_dir(name);
 }
 fn do_rmdir(name: &str){
-    std::fs::remove_dir(name);
+    std::fs::remove_dir(name).unwrap_or_else( |why|{
+        println!("rmdir: cant delete {}{}",name,"No such file or directory");
+    });
+}
+fn do_echo(input: &[u8]){  
+    println!("{}",String::from_utf8(input.to_vec()).unwrap());        
 }
 fn excute_echo(input: &str){
     match recognition_echo_keyword(input.as_bytes()) {
-        IResult::Done(i, _) => {
-            println!("{}",String::from_utf8(i.to_vec()).unwrap())
-        }
-        IResult::Error(error) => println!("Error: {:?}", error),
+        IResult::Done(i, _) => do_echo(i),
+        IResult::Error(_) => println!(""),
         IResult::Incomplete(needed) => println!("Incomplete: {:?}", needed)
     };
 }
@@ -55,7 +58,6 @@ fn recognition_mkdir_keyword(input: &str) -> IResult<&str, &str>{
 fn recognition_rmdir_keyword(input: &str) -> IResult<&str, &str> {
     tag!(input, "rmdir ")
 }
-
 fn string_to_static_str(s: String) -> &'static str { // String convert to static str
     unsafe {
         let ret = mem::transmute(&s as &str);
@@ -64,24 +66,19 @@ fn string_to_static_str(s: String) -> &'static str { // String convert to static
     }
 }
 fn parse_shell_keyword(input: &str){
-    let ls_keyword = "ls";
-    let pwd_keyword = "pwd";
-    let mkdir_keyword = "mkdir";
-    let rmdir_keyword = "rmdir";
-    let echo_keyword  = "echo";
-    if input.starts_with(ls_keyword){
+    if input.starts_with("ls"){
         get_ls();
     } 
-    else if input.starts_with(pwd_keyword){
+    else if input.starts_with("pwd"){
         get_pwd();
     }
-    else if input.starts_with(mkdir_keyword){
+    else if input.starts_with("mkdir"){
         excute_mkdir(input);
     }
-    else if input.starts_with(rmdir_keyword){
-        excute_rmdir(input);
+    else if input.starts_with("rmdir"){
+         excute_rmdir(input);
     }   
-    else if input.starts_with(echo_keyword) {
+    else if input.starts_with("echo") {
         excute_echo(input);
     }
     else {
