@@ -93,7 +93,7 @@ fn parse_shell_keyword(input: &str){
     }else if input.starts_with("mkdir"){
         excute_mkdir(input);
     }else if input.starts_with("rmdir"){
-         excute_rmdir(input);
+        excute_rmdir(input);
     }else if input.starts_with("echo") {
         excute_echo(input);
     }else if input.starts_with("curl"){
@@ -103,12 +103,12 @@ fn parse_shell_keyword(input: &str){
     }
 }
 fn init_dummy_shell(){
-	loop {
-	let mut standard_input = String::new();
-	io::stdin().read_line(&mut standard_input).expect("Failed to read line");
-        let input_to_parser = string_to_static_str(standard_input);
-        parse_shell_keyword(input_to_parser);
-     }
+   loop {
+    let mut standard_input = String::new();
+    io::stdin().read_line(&mut standard_input).expect("Failed to read line");
+    let input_to_parser = string_to_static_str(standard_input);
+    parse_shell_keyword(input_to_parser);
+   }
 }
 fn main(){
     init_dummy_shell();
