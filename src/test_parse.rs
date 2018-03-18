@@ -8,7 +8,6 @@ fn test4(input: &[u8]) -> IResult<&[u8], &[u8]> {
     tag!(input, "Hello,")
 }
 
-// test1~4 are the same functionally
 
 fn main() {
     let sample = "Hello, World!";

@@ -1,10 +1,20 @@
 #[macro_use]
 #[warn(unused_must_use)]
 extern crate nom; //  use parser combinator lib
+extern crate reqwest;
+
+use std::io::Read;
 use nom::{ IResult };
 use std::io;
 use std::mem;
 
+
+fn curl_get_request(url: &str){
+    let mut response = reqwest::get(url).unwrap();
+    let mut s = String::new();
+    response.read_to_string(&mut s);
+    println!("{}",s);
+}
 // get current_directory
 fn get_pwd(){    
     let path = std::env::current_dir().unwrap();
@@ -25,12 +35,19 @@ fn do_rmdir(name: &str){
     });
 }
 fn do_echo(input: &[u8]){  
-    println!("{}",String::from_utf8(input.to_vec()).unwrap());        
+    print!("{}",String::from_utf8(input.to_vec()).unwrap());        
 }
 fn excute_echo(input: &str){
     match recognition_echo_keyword(input.as_bytes()) {
-        IResult::Done(i, _) => do_echo(i),
+        IResult::Done(url, _) => do_echo(url),
         IResult::Error(_) => println!(""),
+        IResult::Incomplete(needed) => println!("Incomplete: {:?}", needed)
+    };
+}
+fn excute_curl(input: &str){
+    match recognition_curl_keyword(input){
+        IResult::Done(i, _) => curl_get_request(i),
+        IResult::Error(_) => println!("curl: usage: curl [URL]"),
         IResult::Incomplete(needed) => println!("Incomplete: {:?}", needed)
     };
 }
@@ -58,6 +75,9 @@ fn recognition_mkdir_keyword(input: &str) -> IResult<&str, &str>{
 fn recognition_rmdir_keyword(input: &str) -> IResult<&str, &str> {
     tag!(input, "rmdir ")
 }
+fn recognition_curl_keyword(input: &str) -> IResult<&str,&str>{
+    tag!(input,"curl ")
+}
 fn string_to_static_str(s: String) -> &'static str { // String convert to static str
     unsafe {
         let ret = mem::transmute(&s as &str);
@@ -66,30 +86,31 @@ fn string_to_static_str(s: String) -> &'static str { // String convert to static
     }
 }
 fn parse_shell_keyword(input: &str){
-    if input.starts_with("ls"){
+      if input.starts_with("ls"){
         get_ls();
-    } 
-    else if input.starts_with("pwd"){
+    }else if input.starts_with("pwd"){
         get_pwd();
-    }
-    else if input.starts_with("mkdir"){
+    }else if input.starts_with("mkdir"){
         excute_mkdir(input);
-    }
-    else if input.starts_with("rmdir"){
+    }else if input.starts_with("rmdir"){
          excute_rmdir(input);
-    }   
-    else if input.starts_with("echo") {
+    }else if input.starts_with("echo") {
         excute_echo(input);
+    }else if input.starts_with("curl"){
+        excute_curl(input);
+    }else {
+        println!("This command is not found");
     }
-    else {
-         println!("The command not found");
-    }    
 }
-fn main(){
+fn init_dummy_shell(){
 	loop {
 		let mut standard_input = String::new();
 		io::stdin().read_line(&mut standard_input).expect("Failed to read line");
         let input_to_parser = string_to_static_str(standard_input);
         parse_shell_keyword(input_to_parser);
      }
+}
+
+fn main(){
+    init_dummy_shell();
 }
