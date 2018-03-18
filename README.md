@@ -13,9 +13,17 @@ cd ru-gnu-core-utils
 cargo build
 ```
 ### 3.Run src
- This time, I implemated ```pwd, ls, mkdir, echo``` :)
 ```
 cargo run
+```
+# Implemented command
+```
+ls
+pwd
+curl
+echo
+rmdir
+mkdir
 ```
 # Demo
 ```
