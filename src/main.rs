@@ -7,6 +7,7 @@ use std::io::Read;
 use nom::{ IResult };
 use std::io;
 use std::mem;
+use std::fs;
 
 
 fn curl_get_request(url: &str){
@@ -27,11 +28,19 @@ fn get_ls(){  // get current dir and file name
     }
 }
 fn do_mkdir(name: &str){ /*make directory. fn argument  is "mkdir <dirname>"*/
-    std::fs::create_dir(name);
+    fs::create_dir(name);
 }
 fn do_rmdir(name: &str){
-    std::fs::remove_dir(name).unwrap_or_else( |why|{
+    fs::remove_dir(name).unwrap_or_else( |_|{
         println!("rmdir: cant delete {}{}",name,"No such file or directory");
+    });
+}
+fn do_touch(filename: &str){
+    fs::File::create(filename);
+}
+fn do_rm(filename: &str){
+    fs::remove_file(filename).unwrap_or_else(|_|{
+        println!("rm: cant delete {}{}",filename,"No such file or directory");
     });
 }
 fn do_echo(input: &[u8]){  
@@ -39,14 +48,28 @@ fn do_echo(input: &[u8]){
 }
 fn excute_echo(input: &str){
     match recognition_echo_keyword(input.as_bytes()) {
-        IResult::Done(url, _) => do_echo(url),
+        IResult::Done(operand, _) => do_echo(operand),
         IResult::Error(_) => println!(""),
+        IResult::Incomplete(needed) => println!("Incomplete: {:?}", needed)
+    };
+}
+fn excute_touch(input:&str){
+    match recognition_touch_keyword(input){
+        IResult::Done(filename, _) => do_touch(filename),
+        IResult::Error(_) => println!("there isnt operand"),
+        IResult::Incomplete(needed) => println!("Incomplete: {:?}", needed)
+    };
+}
+fn excute_rm(input:&str){
+    match recognition_rm_keyword(input){
+        IResult::Done(filename, _) => do_rm(filename),
+        IResult::Error(_) => println!("there isnt operand"),
         IResult::Incomplete(needed) => println!("Incomplete: {:?}", needed)
     };
 }
 fn excute_curl(input: &str){
     match recognition_curl_keyword(input){
-        IResult::Done(i, _) => curl_get_request(i),
+        IResult::Done(url, _) => curl_get_request(url),
         IResult::Error(_) => println!("curl: usage: curl [URL]"),
         IResult::Incomplete(needed) => println!("Incomplete: {:?}", needed)
     };
@@ -78,6 +101,12 @@ fn recognition_rmdir_keyword(input: &str) -> IResult<&str, &str> {
 fn recognition_curl_keyword(input: &str) -> IResult<&str,&str>{
     tag!(input,"curl ")
 }
+fn recognition_touch_keyword(input: &str) -> IResult<&str,&str>{
+    tag!(input,"touch ")
+}
+fn recognition_rm_keyword(input: &str) -> IResult<&str,&str>{
+    tag!(input,"rm ")
+}
 fn string_to_static_str(s: String) -> &'static str { // String convert to static str
     unsafe {
         let ret = mem::transmute(&s as &str);
@@ -97,8 +126,13 @@ fn parse_shell_keyword(input: &str){
     }else if input.starts_with("echo") {
         excute_echo(input);
     }else if input.starts_with("curl"){
-        excute_curl(input);
-    }else {
+        excute_curl(input);    
+    }else if input.starts_with("touch"){
+        excute_touch(input);
+    }else if input.starts_with("rm"){
+        excute_rm(input);
+    }
+    else {
         println!("This command is not found");
     }
 }
