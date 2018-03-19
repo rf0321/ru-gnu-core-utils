@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/ItinoseSan/ru-gnu-core-utils.svg?branch=master)](https://travis-ci.org/ItinoseSan/ru-gnu-core-utils)
+ [![LICENCE](https://img.shields.io/dub/l/vibe-d.svg)](https://github.com/ItinoseSan/ru-gnu-core-utils/blob/master/LICENSE)
+
 # ru-gnu-core-utils
 # Usage
 ### 1.clone this repository and move to the directory.
