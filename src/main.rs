@@ -115,14 +115,14 @@ fn string_to_static_str(s: String) -> &'static str { // String convert to static
     }
 }
 fn parse_shell_keyword(input: &str){
-      if input.starts_with("ls"){
+    if input.starts_with("ls"){
         get_ls();
     }else if input.starts_with("pwd"){
         get_pwd();
     }else if input.starts_with("mkdir"){
         excute_mkdir(input);
     }else if input.starts_with("rmdir"){
-         excute_rmdir(input);
+        excute_rmdir(input);
     }else if input.starts_with("echo") {
         excute_echo(input);
     }else if input.starts_with("curl"){
@@ -145,7 +145,7 @@ fn init_dummy_shell(){
         parse_shell_keyword(input_to_parser);
      }
 }
-
 fn main(){
     init_dummy_shell();
 }
+
