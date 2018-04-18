@@ -13,9 +13,9 @@ use std::fs::File;
 
 
 fn do_cat(filename: &str){
-     let mut s = String::new();
-     File::open(filename).unwrap().read_to_string(&mut s).unwrap();
-     println!("{}",s);
+   let mut s = String::new();
+   File::open(filename).unwrap().read_to_string(&mut s).unwrap();
+   println!("{}",s);
 }
 fn curl_get_request(url: &str){
     let mut response = reqwest::get(url).unwrap();
