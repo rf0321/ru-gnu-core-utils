@@ -1,5 +1,5 @@
 #[macro_use]
-#[warn(unused_must_use)]
+#[allow(unused_must_use)]
 extern crate nom; //  use parser combinator lib
 extern crate reqwest;
 
@@ -8,8 +8,15 @@ use nom::{ IResult };
 use std::io;
 use std::mem;
 use std::fs;
+use std::fs::File;
 
 
+
+fn do_cat(filename: &str){
+     let mut s = String::new();
+     File::open(filename).unwrap().read_to_string(&mut s).unwrap();
+     println!("{}",s);
+}
 fn curl_get_request(url: &str){
     let mut response = reqwest::get(url).unwrap();
     let mut s = String::new();
@@ -88,6 +95,13 @@ fn excute_mkdir(input: &str){
         IResult::Incomplete(needed) => println!("Incomplete: {:?}", needed)
     }
 }
+fn excute_cat(input: &str){
+    match recognition_cat_keyword(input){
+        IResult::Done(operand, _) => do_cat(operand),
+        IResult::Error(error) => println!("Error: {:?}", error),
+        IResult::Incomplete(needed) => println!("Incomplete: {:?}", needed)
+    }
+}
 //  parse keywords
 fn recognition_echo_keyword(input: &[u8]) -> IResult<&[u8], &[u8]>{
     tag!( input, "echo ")
@@ -106,6 +120,9 @@ fn recognition_touch_keyword(input: &str) -> IResult<&str,&str>{
 }
 fn recognition_rm_keyword(input: &str) -> IResult<&str,&str>{
     tag!(input,"rm ")
+}
+fn recognition_cat_keyword(input: &str) -> IResult<&str,&str>{
+    tag!(input,"cat ")
 }
 fn string_to_static_str(s: String) -> &'static str { // String convert to static str
     unsafe {
@@ -131,6 +148,8 @@ fn parse_shell_keyword(input: &str){
         excute_touch(input);
     }else if input.starts_with("rm"){
         excute_rm(input);
+    }else if input.starts_with("cat"){
+        excute_cat(input);
     }
     else {
         println!("This command is not found");
