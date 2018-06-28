@@ -155,5 +155,6 @@ fn init_dummy_shell(){
     }
 }
 fn main() {
-    init_dummy_shell();
+  init_dummy_shell();
 }
+
