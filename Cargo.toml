@@ -5,3 +5,4 @@ authors = ["ItinoseSan <dhelitus@gmail.com>"]
 [dependencies]
 nom = "^3.2"
 reqwest = "*"
+
