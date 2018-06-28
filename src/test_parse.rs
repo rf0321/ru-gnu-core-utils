@@ -5,9 +5,11 @@ use nom::{IResult, space, alpha};
 
 
 fn test4(input: &[u8]) -> IResult<&[u8], &[u8]> {
-    tag!(input, "Hello,")
+    tag!(input, "Hello,") => print(), 
 }
-
+fn print(){
+    println!("aa");
+}
 
 fn main() {
     let sample = "Hello, World!";
