@@ -8,7 +8,6 @@ use std::io;
 use std::mem;
 
 mod functions;
-mod test_parse;
 
 named!(echo_command_parser<&str,&str>,
     ws!(tag_s!("echo "))
@@ -40,13 +39,25 @@ fn handle_echo_command(input:&str){
     }
 }
 fn handle_curl_command(input:&str){
-
+    match curl_command_parser(input) {
+        IResult::Done(url, _) => functions::curl_get_request(url),
+        IResult::Error(_) => println!("curl: usage: curl [URL]"),
+        IResult::Incomplete(needed) => println!("Incomplete: {:?}", needed)
+    }
 }
 fn handle_touch_command(input:&str){
-
+    match touch_command_parser(input){
+        IResult::Done(filename, _) => functions::do_touch(filename),
+        IResult::Error(_) => println!("there isnt operand"),
+        IResult::Incomplete(needed) => println!("Incomplete: {:?}", needed)
+    }
 }
 fn handle_rm_command(input:&str){
-
+    match rm_command_parser(input){
+        IResult::Done(filename, _) => functions::do_rm(filename),
+        IResult::Error(_) => println!("there isnt operand"),
+        IResult::Incomplete(needed) => println!("Incomplete: {:?}", needed)
+    }
 }
 fn handle_mkdir_command(input:&str){
     match mkdir_command_parser(input){
@@ -57,16 +68,25 @@ fn handle_mkdir_command(input:&str){
 }
 fn handle_rmdir_command(input:&str){
     match rmdir_command_parser(input){
-            IResult::Done(operand, _) => functions::do_rmdir(operand),
-            IResult::Error(error) => println!("Error: {:?}", error),
-            IResult::Incomplete(needed) => println!("Incomplete: {:?}", needed)
+        IResult::Done(operand, _) => functions::do_rmdir(operand),
+        IResult::Error(error) => println!("Error: {:?}", error),
+        IResult::Incomplete(needed) => println!("Incomplete: {:?}", needed)
     }
 }
 fn handle_cat_command(input:&str){
-
+     match cat_command_parser(input){
+        IResult::Done(operand, _) => functions::do_cat(operand),
+        IResult::Error(error) => println!("Error: {:?}", error),
+        IResult::Incomplete(needed) => println!("Incomplete: {:?}", needed)
+    }
 }
-
-fn tokenize_command(input: &str){
+fn handle_pwd_command(){
+    functions::get_pwd();
+}
+fn handle_ls_command(){
+    functions::get_ls();
+}
+fn excute_command(input: &str){
     let separators = vec![' ', '\n', '\t', '\r'];
     let mut tokenizer = token::Tokenizer::new(input.as_bytes(), separators);
 
@@ -83,13 +103,12 @@ fn tokenize_command(input: &str){
             "mkdir"  => handle_mkdir_command(input),
             "rmdir"  => handle_rmdir_command(input),
             "cat"    => handle_cat_command(input),
-            "ls"     => functions::get_ls(),
-            "pwd"    => functions::get_pwd(),
+            "ls"     => handle_ls_command(),
+            "pwd"    => handle_pwd_command(),
             _=> println!("")
         }
     }
 }
-
 fn string_to_static_str(s: String) -> &'static str { //  ReadLine's String convert to static str
     unsafe {
         let ret = mem::transmute(&s as &str);
@@ -102,17 +121,16 @@ fn init_dummy_shell(){
         let mut standard_input = String::new();
         io::stdin().read_line(&mut standard_input).expect("Failed to read line");
         let input_to_excuter = string_to_static_str(standard_input);
-   //     excute_command(input_to_excuter);
+        excute_command(input_to_excuter);
     }
 }
 fn main() {
-    test_parse::call();
+    init_dummy_shell();
 }
-
 #[test]
 fn test_tokenize_command(){
-    tokenize_command("echo Hoge");
-    tokenize_command("Hi! Im 17 guy. I like to play internet game")
+    excute_command("echo Hoge");
+    excute_command("Hi! Im 17 guy. I like to play internet game")
 }
 #[test]
 fn call_module_function(){
