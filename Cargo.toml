@@ -5,4 +5,5 @@ authors = ["ItinoseSan <dhelitus@gmail.com>"]
 [dependencies]
 nom = "^3.2"
 reqwest = "*"
-
+[dependencies.token]
+git = "https://github.com/machtan/token-rs"
