@@ -138,3 +138,4 @@ fn call_module_function(){
     functions::curl_get_request("http://example.com");    
     functions::get_ls();    
 }
+
